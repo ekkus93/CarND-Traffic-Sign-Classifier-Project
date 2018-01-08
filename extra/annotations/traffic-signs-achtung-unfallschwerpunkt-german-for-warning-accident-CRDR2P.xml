@@ -1,0 +1,23 @@
+<annotation>
+    <folder>extra</folder>
+    <filename>traffic-signs-achtung-unfallschwerpunkt-german-for-warning-accident-CRDR2P.jpg</filename>
+    <size>
+        <width>866</width>
+        <height>1390</height>
+        <depth>3</depth>
+    </size>
+    <segmented>0</segmented>
+    <object>
+        <name>crop</name>
+        <pose>Unspecified</pose>
+        <truncated>0</truncated>
+        <occluded>0</occluded>
+        <difficult>0</difficult>
+        <bndbox>
+            <xmin>121</xmin>
+            <ymin>226</ymin>
+            <xmax>802</xmax>
+            <ymax>815</ymax>
+        </bndbox>
+    </object>
+</annotation>

@@ -13,20 +13,15 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./examples/visualization.jpg "Visualization"
-[image2]: ./examples/grayscale.jpg "Grayscaling"
-[image3]: ./examples/random_noise.jpg "Random Noise"
-[image4]: ./examples/placeholder.png "Traffic Sign 1"
-[image5]: ./examples/placeholder.png "Traffic Sign 2"
-[image6]: ./examples/placeholder.png "Traffic Sign 3"
-[image7]: ./examples/placeholder.png "Traffic Sign 4"
-[image8]: ./examples/placeholder.png "Traffic Sign 5"
+[image1]: ./writeup_images/color_frequencies.png "Visualization"
+[image2]: ./writeup_images/number_of_traffic_signs_per_label.png "Grayscaling"
+[image3]: ./writeup_images/sample_train_images.png "Random Noise"
 ---
 ### Writeup / README
 
 The purpose of this project is to build a model to classify German traffic signs. The model will be a convolutional neural network based on LeNet.  
 
-You're reading it! and here is a link to my [project code](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/Traffic_Sign_Classifier.ipynb)
+Here is a link to my [project code](https://github.com/ekkus93/CarND-Traffic-Sign-Classifier-Project)
 
 ### Data Set Summary & Exploration
 
@@ -35,11 +30,11 @@ You're reading it! and here is a link to my [project code](https://github.com/ud
 I used the pandas library to calculate summary statistics of the traffic
 signs data set:
 
-* The size of training set is ?
-* The size of the validation set is ?
-* The size of test set is ?
-* The shape of a traffic sign image is ?
-* The number of unique classes/labels in the data set is ?
+* The size of training set is 34799
+* The size of the validation set is 4410
+* The size of test set is 12630
+* The shape of a traffic sign image is (32, 32)
+* The number of unique classes/labels in the data set is 43
 
 #### 2. Include an exploratory visualization of the dataset.
 

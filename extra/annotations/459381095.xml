@@ -1,0 +1,23 @@
+<annotation>
+    <folder>extra</folder>
+    <filename>459381095.jpg</filename>
+    <size>
+        <width>768</width>
+        <height>1024</height>
+        <depth>3</depth>
+    </size>
+    <segmented>0</segmented>
+    <object>
+        <name>crop</name>
+        <pose>Unspecified</pose>
+        <truncated>0</truncated>
+        <occluded>0</occluded>
+        <difficult>0</difficult>
+        <bndbox>
+            <xmin>116</xmin>
+            <ymin>68</ymin>
+            <xmax>677</xmax>
+            <ymax>616</ymax>
+        </bndbox>
+    </object>
+</annotation>
