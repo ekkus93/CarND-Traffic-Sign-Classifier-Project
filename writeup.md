@@ -13,13 +13,17 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./writeup_images/color_frequencies.png "Visualization"
-[image2]: ./writeup_images/number_of_traffic_signs_per_label.png "Grayscaling"
-[image3]: ./writeup_images/sample_train_images.png "Random Noise"
+[image1]: ./writeup_images/sample_train_images.png "Sample Training Images"
+[image2]: ./writeup_images/sample_train_gray_images.png "Sample Training Images (Grayscale)"
+[image3]: ./writeup_images/number_of_traffic_signs_per_label.png "Number of Traffic Signs per Label"
+[image4]: ./writeup_images/sample_train_rotate_images.png "Sample Training Images (Rotate)"
+[image5]: ./writeup_images/sample_train_shift_images.png "Sample Training Images (Shift)"
+[image6]: ./writeup_images/sample_train_shear_images.png "Sample Training Images (Shear)"
+
 ---
 ### Writeup / README
 
-The purpose of this project is to build a model to classify German traffic signs. The model will be a convolutional neural network based on LeNet.  
+The purpose of this project is to build a model to classify German traffic signs. The model is a convolutional neural network based on LeNet.  The image data will be augmented and an additional enhanced grayscale layer used as the input.  This will produce an acceptable model but we will use an ensemble model to improve the accuracy even further.
 
 Here is a link to my [project code](https://github.com/ekkus93/CarND-Traffic-Sign-Classifier-Project)
 
@@ -38,74 +42,101 @@ signs data set:
 
 #### 2. Include an exploratory visualization of the dataset.
 
-Here is an exploratory visualization of the data set. It is a bar chart showing how the data ...
+Here is a sample of the traffic light images from the training dataset. 
 
-![alt text][image1]
+![][image1]
+
+Here is a breakdown of the number of images per label from the training dataset.
+
+![][image3]
+
+The images are imbalanced. The traffic sign with least number of examples is "Go straight or left" (37) with 180 images.
+The traffic sign with most number of examples is "Speed limit (50km/h)" (2) with 2010 images.
 
 ### Design and Test a Model Architecture
 
-#### 1. Describe how you preprocessed the image data. What techniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, and provide example images of the additional data. Then describe the characteristics of the augmented training set like number of images in the set, number of images for each class, etc.)
+#### Preprocessing the Image Data
 
-As a first step, I decided to convert the images to grayscale because ...
+##### Balancing Images
+The images will be augmented so each label will end up having the same number of images as the label with the most images (2010).  The main purpose of balancing the data is to not bias the prediction towards more common traffic signs.  We will also need the extra data for the ensemble model.
 
-Here is an example of a traffic sign image before and after grayscaling.
+If a label has less than 2010 images, an images for that label will be picked at random.  The random image will have one of the following transformations applied to it:
 
-![alt text][image2]
+1. Rotation 
 
-As a last step, I normalized the image data because ...
+The range for the random rotation between -12.5 and 12.5 degrees. Some of the traffic signs such as "Turn right ahead" and "Turn left ahead" depend on direction so we will limit the rotation to that range.
+![][image4]
 
-I decided to generate additional data because ... 
+2. Shift 
 
-To add more data to the the data set, I used the following techniques because ... 
+The images can be shifted up or down by up to 3 pixels and left or right by up to 3 pixels.
+![][image5]
 
-Here is an example of an original image and an augmented image:
+3. Shear
 
-![alt text][image3]
+The images can be sheared from -0.2 to 2.0 radians.
+![][image6]
 
-The difference between the original data set and the augmented data set is the following ... 
+##### Grayscale layer
 
+In addition to the RBG color layers, an additional grayscale layer was added to each of the images.  The grayscale layer was sharpened using histogram equalization. The color infotmation is important for distinguishing different traffic signs. The sharpened grayscale layer is important for different signs with text such as speed limit signs.
+![][image2]
 
-#### 2. Describe what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
-
+#### 2. The Model
 My final model consisted of the following layers:
 
 | Layer         		|     Description	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| Input         		| 32x32x3 RGB image   							| 
-| Convolution 3x3     	| 1x1 stride, same padding, outputs 32x32x64 	|
-| RELU					|												|
-| Max pooling	      	| 2x2 stride,  outputs 16x16x64 				|
-| Convolution 3x3	    | etc.      									|
-| Fully connected		| etc.        									|
-| Softmax				| etc.        									|
-|						|												|
-|						|												|
+| Input         		| 32x32x4 RGBL image   							| 
+| Convolution 5x5     	| 1x1 stride, same padding, outputs 32x32x16 	|
+| Leaky ReLU					|	alpha = 0.00001											|
+| Max pooling	      	| 2x2 stride,  outputs 16x16x16 				|
+| Convolution 5x5     	| 1x1 stride, same padding, outputs 16x16x32 	|
+| Leaky ReLU					|	alpha = 0.00001											|
+| Max pooling	      	| 2x2 stride,  outputs 8x8x32 				|
+| Convolution 5x5     	| 1x1 stride, same padding, outputs 8x8x64 	|
+| Leaky ReLU					|	alpha = 0.00001											|
+| Max pooling	      	| 2x2 stride,  outputs 4x4x64 				|
+| Flattened  | Output = 1024  |
+| Fully connected		| Output = 512        									|
+| Leaky ReLU					|	alpha = 0.00001											|
+| Dropout  | keep_prob = 0.5  |
+| Fully connected		| Output = 256        									|
+| Leaky ReLU					|	alpha = 0.00001											|
+| Dropout  | keep_prob = 0.5  |
+| Fully connected		| Output = 43        									|
  
+There are 3 convolutional/max pooling layers.  Leaky ReLU's were used instead of regular ReLU's to try to avoid the “dying ReLU” problem.  Dropout was added to the fully connected layers to help prevent overfitting.
+
+#### 3. Training
+##### Simple Model
+The model was trained for 30 epochs with a batch size of 125.  An Adam Optimizer with a learning rate of 0.001 was used.  In additional to this, L2 regularization was added with a beta of 0.0001 to help prevent overfitting.  For the 30 epochs, the model with the best validation accuracy was saved as the final model.
+
+##### Ensemble Model
+For the ensemble model, the simple model was used with the same training parameters but with 10 versions of that model.  The only change was the training data.  90% of the training data was randomly chosen to train each model.  The models vote on the best answer.  The most voted label for an image is the predicted label.
+
+The reason for using slightly different datasets is create randomly different models.  One model might be better at predicting certain types of labels compared to other models.  The models should have some overlapping specializations.  Voting should help these overlapping models predict the correct label.  Multiple models also helps prevent overfitting.
 
 
-#### 3. Describe how you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
+#### 4. Solution and Validation
 
-To train the model, I used an ....
+##### Simple Model
 
-#### 4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
-
-My final model results were:
 * training set accuracy of ?
 * validation set accuracy of ? 
 * test set accuracy of ?
 
-If an iterative approach was chosen:
-* What was the first architecture that was tried and why was it chosen?
-* What were some problems with the initial architecture?
-* How was the architecture adjusted and why was it adjusted? Typical adjustments could include choosing a different model architecture, adding or taking away layers (pooling, dropout, convolution, etc), using an activation function or changing the activation function. One common justification for adjusting an architecture would be due to overfitting or underfitting. A high accuracy on the training set but low accuracy on the validation set indicates over fitting; a low accuracy on both sets indicates under fitting.
-* Which parameters were tuned? How were they adjusted and why?
-* What are some of the important design choices and why were they chosen? For example, why might a convolution layer work well with this problem? How might a dropout layer help with creating a successful model?
+Initially, I tried using only RGB color layers for the input.  The test accuracy was a little below 93% for 30 epochs.  I tried training longer with lower training rates.  The model would overfit but the test validation would still stay below 93%.  Dropout and L2 regulization was added to deal with the overfitting.  The test validation accuracy increased over 93% but only slightly. From evaluating the misclassified traffic signs in the validation set, I could see that it was having the most trouble with different speed limit signs. The numbers were blurry. To deal with this problem, I added the histogram equalized grayscale layer.  This increased the test accuracy to around 96%. 
 
-If a well known architecture was chosen:
-* What architecture was chosen?
-* Why did you believe it would be relevant to the traffic sign application?
-* How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?
- 
+##### Ensemble Model
+
+An accuracy of 96% was good but I thought that it could be better.  An ensemble model seemed like an easy way to improve the accuracy without doing a lot of changes to the model.  Only a slight modification was needed to be done to the training data.  The individual models all had around a 95-96% test accuracy but when ensembled together, the test accuracy increased to around 98%.
+
+
+My final model results were:
+* training set accuracy of 0.98
+* validation set accuracy of ? 
+* test set accuracy of ?
 
 ### Test a Model on New Images
 
