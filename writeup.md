@@ -20,6 +20,9 @@ The goals / steps of this project are the following:
 [image5]: ./writeup_images/sample_train_shift_images.png "Sample Training Images (Shift)"
 [image6]: ./writeup_images/sample_train_shear_images.png "Sample Training Images (Shear)"
 
+[image7]: ./writeup_images/extra_traffic_signs.png
+[image8]: ./writeup_images/ensemble_individual_accuracies.png
+
 ---
 ### Writeup / README
 
@@ -106,48 +109,50 @@ My final model consisted of the following layers:
 | Dropout  | keep_prob = 0.5  |
 | Fully connected		| Output = 43        									|
  
-There are 3 convolutional/max pooling layers.  Leaky ReLU's were used instead of regular ReLU's to try to avoid the “dying ReLU” problem.  Dropout was added to the fully connected layers to help prevent overfitting.
+There are 3 convolutional/max pooling layers.  Leaky ReLU's with an alpha of 1e-05 were used instead of regular ReLU's to try to avoid the “dying ReLU” problem.  Dropout was added to the fully connected layers to help prevent overfitting.
 
 #### 3. Training
 ##### Simple Model
-The model was trained for 30 epochs with a batch size of 125.  An Adam Optimizer with a learning rate of 0.001 was used.  In additional to this, L2 regularization was added with a beta of 0.0001 to help prevent overfitting.  For the 30 epochs, the model with the best validation accuracy was saved as the final model.
+The model was trained for 100 epochs with a batch size of 125.  An Adam Optimizer with a learning rate of 1e-3 was used.  In additional to this, L2 regularization was added with a beta of 1e-4 to help prevent overfitting.  Out of the 100 epochs, the model with the best validation accuracy was saved as the final model.
 
 ##### Ensemble Model
-For the ensemble model, the simple model was used with the same training parameters but with 10 versions of that model.  The only change was the training data.  90% of the training data was randomly chosen to train each model.  The models vote on the best answer.  The most voted label for an image is the predicted label.
+For the ensemble model, the simple model was used with the same training parameters but with 10 versions of that model.  The only change was the training data.  90% of the training data was randomly chosen to train each model.  The models vote on the best answer.  Majority wins for the predicted label.
 
 The reason for using slightly different datasets is create randomly different models.  One model might be better at predicting certain types of labels compared to other models.  The models should have some overlapping specializations.  Voting should help these overlapping models predict the correct label.  Multiple models also helps prevent overfitting.
-
 
 #### 4. Solution and Validation
 
 ##### Simple Model
 
-* training set accuracy of ?
-* validation set accuracy of ? 
-* test set accuracy of ?
+* training set accuracy of 1.000
+* validation set accuracy of 0.981 
+* test set accuracy of 0.967
 
-Initially, I tried using only RGB color layers for the input.  The test accuracy was a little below 93% for 30 epochs.  I tried training longer with lower training rates.  The model would overfit but the test validation would still stay below 93%.  Dropout and L2 regulization was added to deal with the overfitting.  The test validation accuracy increased over 93% but only slightly. From evaluating the misclassified traffic signs in the validation set, I could see that it was having the most trouble with different speed limit signs. The numbers were blurry. To deal with this problem, I added the histogram equalized grayscale layer.  This increased the test accuracy to around 96%. 
+Initially, I tried using only RGB color layers for the input.  The test accuracy was a little below 93% for 30 epochs.  I tried training longer with lower training rates.  The model would overfit but the test validation would still stay below 93%.  Dropout and L2 regulization was added to deal with the overfitting.  The test validation accuracy increased over 93% but only slightly. From evaluating the misclassified traffic signs in the validation set, I could see that it was having the most trouble with different speed limit signs. The numbers were blurry. To deal with this problem, I added the histogram equalized grayscale layer.  This increased the test accuracy to 96.7%. 
+
+There is a little bit of overfitting with the Train Accuracy being at 100%.  The Validation Accuracy is slightly lower than the Train Accuracy and the Test Accuracy is slightly lower than the Validation Accuracy.
 
 ##### Ensemble Model
 
-An accuracy of 96% was good but I thought that it could be better.  An ensemble model seemed like an easy way to improve the accuracy without doing a lot of changes to the model.  Only a slight modification was needed to be done to the training data.  The individual models all had around a 95-96% test accuracy but when ensembled together, the test accuracy increased to around 98%.
+An accuracy of 96.7% was good but I thought that it could be better.  An ensemble model seemed like an easy way to improve the accuracy without doing a lot of changes to the model.  Only a slight modification was needed to be done with dividing up the training data.  The accuracies for each individual model look similar to the single model.  
+
+![][image8]
+
+The individual models all had around 96-97% test accuracy but when ensembled together, the test accuracy increased to 98.5%.
 
 
 My final model results were:
-* training set accuracy of 0.98
-* validation set accuracy of ? 
-* test set accuracy of ?
+* training set accuracy of 1.000
+* validation set accuracy of 0.996 
+* test set accuracy of 0.985
 
 ### Test a Model on New Images
 
-#### 1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
+Here are ten German traffic signs that I found on the web:
 
-Here are five German traffic signs that I found on the web:
+![][image7]
 
-![alt text][image4] ![alt text][image5] ![alt text][image6] 
-![alt text][image7] ![alt text][image8]
-
-The first image might be difficult to classify because ...
+As part of the preprocessing, I manually cropped the images.  
 
 #### 2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
 
@@ -155,14 +160,19 @@ Here are the results of the prediction:
 
 | Image			        |     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| Stop Sign      		| Stop sign   									| 
-| U-turn     			| U-turn 										|
-| Yield					| Yield											|
-| 100 km/h	      		| Bumpy Road					 				|
-| Slippery Road			| Slippery Road      							|
+| Speed limit (30km/h)      		|    									| 
+| Pedestrians     			|  										|
+| Children crossing					| 											|
+| Roundabout mandatory	      		| 					 				|
+| Ahead only			|       							|
 
+| Slippery road      		|    									| 
+| No entry     			|  										|
+| Road narrows on the right					| 											|
+| Bicycles crossing	      		| 					 				|
+| General caution			|       							|
 
-The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
+The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 90%. This compares favorably to the accuracy on the test set of ...
 
 #### 3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
 
