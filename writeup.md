@@ -22,6 +22,9 @@ The goals / steps of this project are the following:
 
 [image7]: ./writeup_images/extra_traffic_signs.png
 [image8]: ./writeup_images/ensemble_individual_accuracies.png
+[image9]: ./writeup_images/extra_peds.png
+[image10]: ./writeup_images/extra_bicycle.png
+[image10]: ./writeup_images/wiki_right_of_way.png
 
 ---
 ### Writeup / README
@@ -159,20 +162,45 @@ As part of the preprocessing, I manually cropped the images.
 Here are the results of the prediction:
 
 | Image			        |     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| Speed limit (30km/h)      		|    									| 
-| Pedestrians     			|  										|
-| Children crossing					| 											|
-| Roundabout mandatory	      		| 					 				|
-| Ahead only			|       							|
+|:---------------------|:---------------------------------------------| 
+| (1) Speed limit (30km/h) |	(1) Speed limit (30km/h) |
+| (27) Pedestrians |	(11) Right-of-way at the next intersection |
+| (28) Children crossing |	(28) Children crossing |
+| (40) Roundabout mandatory	| (40) Roundabout mandatory |
+| (35) Ahead only	| (35) Ahead only |
+| (23) Slippery road |	(23) Slippery road |
+| (17) No entry	| (17) No entry |
+| (24) Road narrows on the right | (24) Road narrows on the right |
+| (29) Bicycles crossing |	(8) Speed limit (120km/h) |
+| (18) General caution |	(18) General caution |
 
-| Slippery road      		|    									| 
-| No entry     			|  										|
-| Road narrows on the right					| 											|
-| Bicycles crossing	      		| 					 				|
-| General caution			|       							|
+The model was able to correctly guess 8 of the 10 traffic signs, which gives an accuracy of 80%. The two traffic signs which were incorrect were "(27) Pedestrians" and "(29) Bicycles crossing".
 
-The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 90%. This compares favorably to the accuracy on the test set of ...
+#### Mislabeled "Pedestrian" Traffic Sign
+
+Here is a comparison of the mislabeled "Pedestrian" image with sample "Pedestrian" and "Right-of-way at the next intersection" images from the validation data.
+
+![][image9]
+
+Both "Pedestrian"" and "Right-of-way at the next intersection" traffic signs are red and white triangular signs.  From the sample images, the inside the "Right-of-way at the next intersection" traffic signs have a symbol which looks sort of like a person but not quite.
+
+Here is an clearer image of what it looks like from [Wikipedia](https://en.wikipedia.org/wiki/Road_signs_in_Germany)
+
+![][image11]
+
+It is easy to see how the model could misinterpret the symbol inside the triangle as having a head, 2 arms and 2 legs. 
+
+#### Mislabeled "Bicycles crossing" Traffic Sign
+
+The extra "Bicycles crossing" image looks slightly different from the other ones training data.  It has a person riding the bicycle instead of just the bicycle by itself.  The sign is also rotated slightly clockwise.  I was curious if the model would still be able to recognize the bicycle and make the connection that it was a "Bicycles crossing" traffic sign.  
+
+Here is a comparison of the mislabeled "Bicycles crossing" image with sample "Bicycles crossing" and "Speed limit (120km/h)" images from the validation data. 
+
+![][image10]
+
+The sample images for "Speed limit (120km/h)" don't really look that similar to the "Bicycles crossing" image.  It is hard to understand why it would choose that but maybe looking at the top softmax probabilities might help.
+
+
 
 #### 3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
 
