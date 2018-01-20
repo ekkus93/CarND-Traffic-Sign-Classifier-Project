@@ -20,10 +20,11 @@ The goals / steps of this project are the following:
 [image5]: ./writeup_images/sample_train_shift_images.png "Sample Training Images (Shift)"
 
 [image6]: ./writeup_images/sample_train_shear_images.png "Sample Training Images (Shear)"
-[image7]: ./writeup_images/extra_traffic_signs.png
-[image8]: ./writeup_images/ensemble_individual_accuracies.png
-[image9]: ./writeup_images/extra_peds1.png
-[image10]: ./writeup_images/extra_peds2.png
+[image7]: ./writeup_images/extra_traffic_signs.png "Extra Traffic Signs"
+[image8]: ./writeup_images/ensemble_individual_accuracies.png 
+
+[image9]: ./writeup_images/extra_30.png
+[image10]: ./writeup_images/extra_30_activations.png
 
 [image11]: ./writeup_images/extra_bicycle.png
 [image12]: ./writeup_images/simple_model_accuracies.png
@@ -31,13 +32,18 @@ The goals / steps of this project are the following:
 [image14]: ./writeup_images/msl_model_accuracies.png
 [image15]: ./writeup_images/wiki_right_of_way.png
 
-[image16]: ./writeup_images/top_softmax_peds.png
 [image17]: ./writeup_images/top_softmax_bicycle.png
+[image18]: ./writeup_images/extra_peds.png
+[image19]: ./writeup_images/extra_peds_activations.png
+[image20]: ./writeup_images/extra_roundabout.png
+[image21]: ./writeup_images/extra_roundabout_activations.png
+[image22]: ./writeup_images/extra_no_entry.png
+[image23]: ./writeup_images/extra_no_entry_activations.png
 
 ---
 ### Writeup / README
 
-The purpose of this project is to build a model to classify German traffic signs. The model is a convolutional neural network based on LeNet.  The image data will be augmented and an additional enhanced grayscale layer used as the input.  This will produce an acceptable model but we will use an ensemble model to improve the accuracy even further.
+The purpose of this project is to build a model to classify German traffic signs. The model is a convolutional neural network based on LeNet.  The image data will be augmented and an additional enhanced grayscale layer used as the input.  This will produce an acceptable model but we will use an ensemble model to improve the accuracy even further.  The ensemble model will be an easy way to improve the accuracy without having to make a lot of structural changes to the model or modifications to the data.
 
 Here is a link to my [project code](https://github.com/ekkus93/CarND-Traffic-Sign-Classifier-Project)
 
@@ -133,27 +139,27 @@ The reason for using slightly different datasets is create randomly different mo
 
 #### 4. Solution and Validation
 
-##### Simple Model
+##### Single Model
 
 * training set accuracy of 1.000
-* validation set accuracy of 0.975 
-* test set accuracy of 0.959
+* validation set accuracy of 0.985 
+* test set accuracy of 0.966
 
-! [] [image12]
+![] [image12]
 
-Initially, I tried using only RGB color layers for the input.  The test accuracy was a little below 93% for 30 epochs.  I tried training longer with lower training rates.  The model would overfit but the test validation would still stay below 93%.  Dropout and L2 regulization was added to deal with the overfitting.  The test validation accuracy increased over 93% but only slightly. From evaluating the misclassified traffic signs in the validation set, I could see that it was having the most trouble with different speed limit signs. The numbers were blurry. To deal with this problem, I added the histogram equalized grayscale layer.  This increased the test accuracy to 95.9%. 
+Initially, I tried using only RGB color layers for the input.  The test accuracy was a little below 93% for 30 epochs.  I tried training longer with lower training rates.  The model would overfit but the test validation would still stay below 93%.  Dropout and L2 regulization was added to deal with the overfitting.  The test validation accuracy increased over 93% but only slightly. From evaluating the misclassified traffic signs in the validation set, I could see that it was having the most trouble with different speed limit signs. The numbers were blurry. To deal with this problem, I added the histogram equalized grayscale layer.  This increased the test accuracy to 96.6%. 
 
 There is a little bit of overfitting with the Train Accuracy being at 100%.  The Validation Accuracy is slightly lower than the Train Accuracy and the Test Accuracy is slightly lower than the Validation Accuracy.
 
 ##### Ensemble Model
 
-A test accuracy of 95.9% was good but I thought that it could be better.  An ensemble model seemed like an easy way to improve the accuracy without doing a lot of changes to the model.  Only a slight modification was needed to be done with dividing up the training data.  10 models were used, each training on a random 90% of the training data.  This should improve the accuracy but the disadvantage is that this will increase the training time by 9 times. 
+A test accuracy of 96.6% was good but I thought that it could be better.  An ensemble model seemed like an easy way to improve the accuracy without doing a lot of changes to the model.  Only a slight modification was needed to be done with dividing up the training data.  10 models were used, each training on a random 90% of the training data.  The main purpose of this was to make sure that models would be different.  Hopefully, some models would be better at predicting certain types of traffic signs and the majority of the models would pick the best label.  This should help improve the accuracy. The disadvantage of this is that the training time will increase by 9 times. Predictions will take about 10 times as long compared to using a single model.
 
 Here are the accuracies for all of the 10 models:
 
 ![][image8]
 
-They are similar to that of the single model.  They are also similar to each other.  The validation accuracies range from 97.5-98.4%.  The test accuracies range from 95.7-97.0%.
+They are similar to that of the single model.  They are also similar to each other.  The validation accuracies range from 97.3-98.5%.  The test accuracies range from 95.7-96.8%.
 
 ###### Voting vs. Mean Softmax Logits
 
@@ -162,19 +168,19 @@ I tried two different ways of ensembling the individual models: a Voting model a
 | Data Type	| Voting Accuracy | Mean Softmax Logits Accuracy |
 |:----------|----------------:|-----------------------------:| 
 | train	    | 1.000           | 1.000                        |
-| valid	    | 0.990           | 0.989                        |
-| test	    | 0.985           | 0.985                        |
+| valid	    | 0.993           | 0.992                        |
+| test	    | 0.984           | 0.984                        |
 
-! [] [image13] ! [] [image14]
+![] [image13] ![] [image14]
 
-Both models were pretty similar with a validation accuracy of 98.9-99.0% and a test accuracy of 98.5%.
+Both models were pretty similar with a validation accuracy of 99.2-99.3% and a test accuracy of 98.4%.
 
 My final model results were:
 * training set accuracy of 1.000
-* validation set accuracy of 0.990
-* test set accuracy of 0.985
+* validation set accuracy of 0.993
+* test set accuracy of 0.984
 
-! [] [image13]
+![] [image13]
 
 ### Test a Model on New Images
 
@@ -191,7 +197,7 @@ Here are the results of the prediction:
 | Image			        |     Prediction	        					| 
 |:---------------------|:---------------------------------------------| 
 | (1) Speed limit (30km/h) |	(1) Speed limit (30km/h) |
-| (27) Pedestrians |	(18) General caution |
+| (27) Pedestrians |	(27) Pedestrians |
 | (28) Children crossing |	(28) Children crossing |
 | (40) Roundabout mandatory	| (40) Roundabout mandatory |
 | (35) Ahead only	| (35) Ahead only |
@@ -206,7 +212,7 @@ Here are the results of the prediction:
 | Image			        |     Prediction	        					| 
 |:---------------------|:---------------------------------------------| 
 | (1) Speed limit (30km/h) |	(1) Speed limit (30km/h) |
-| (27) Pedestrians |	(18) General caution |
+| (27) Pedestrians |	(27) Pedestrians |
 | (28) Children crossing |	(28) Children crossing |
 | (40) Roundabout mandatory	| (40) Roundabout mandatory |
 | (35) Ahead only	| (35) Ahead only |
@@ -216,23 +222,7 @@ Here are the results of the prediction:
 | (29) Bicycles crossing |	(28) Children crossing |
 | (18) General caution |	(18) General caution |
 
-The both models was able to correctly guess 8 of the 10 traffic signs, which gives an accuracy of 80%. The two traffic signs which were incorrect were "(27) Pedestrians" and "(29) Bicycles crossing".
-
-#### Mislabeled "Pedestrian" Traffic Sign
-
-Here is a comparison of the mislabeled "Pedestrian" image with sample "Pedestrian" and "Right-of-way at the next intersection" images from the validation data.
-
-![][image9]
-![][image10]
-
-The Voting Model predicted that the "Pedestrian" traffic sign was a "Right-of-way at the next intersection" traffic sign and the Mean Softmax Logits Model predicted that it was a "General caution" traffic sign.
-All three traffic signs are red and white triangular signs.  From the sample images, the inside the "Right-of-way at the next intersection" traffic signs have a symbol which looks sort of like a person. 
-
-Here is an clearer image of what it looks like from [Wikipedia](https://en.wikipedia.org/wiki/Road_signs_in_Germany):
-
-![][image11]
-
-It is easy to see how the model could misinterpret the symbol inside the triangle as having a head, 2 arms and 2 legs. As for the "Right-of-way at the next intersection" traffic sign, that is harder to come up with a reasonable explanation but looking at the top 5 Softmax Probabilities for the models later might help.
+The both models was able to correctly guess 8 of the 10 traffic signs, which gives an accuracy of 90%. The one traffic sign which was mislabeled was "(29) Bicycles crossing".
 
 #### Mislabeled "Bicycles crossing" Traffic Sign
 
@@ -244,7 +234,7 @@ Here is a comparison of the mislabeled "Bicycles crossing" image with sample "Bi
 
 ![] [image11]
 
-The sample images for "Speed limit (120km/h)" don't really look that similar to the "Bicycles crossing" image.  Besides both having some black figures in the middle of a red traffic sign, they aren't that similar.  
+The sample images for "Children crossing" don't really look that similar to the "Bicycles crossing" image.  Besides both having some black figures in the middle of a red traffic sign, they aren't that similar.  Maybe looking at the Top Softmax Probabilities might shed some light on to why this sign was mislabeled.
 
 ### Top Softmax Probabilities
 
@@ -252,19 +242,35 @@ For the mislabeled "Pedestrian" traffic sign, here are the top 5 Softmax Probabi
 
 ![] [image16]
 
-Models 1 and 3 actually make the correct prediction for the "Pedestrian" traffic sign with both having Softmax Probabilies of over 99%.  Model 0 has a probability of 69.7% while Models 2, 4, 5, 7 and 8 have probabilities of 6.27% or less.  Some of the models had this correct traffic sign in their top 5 lists but overall, it wasn't enough to be the best prediction.
 
 Here are the top 5 Softmax Probabilities for each of the models for the "Bicycles crossing" traffic sign:
 
 ![] [image17]
 
-5 out of the 10 models had "Bicycles crossing" in their Top 5 lists with Model 8 having a probability of 87.14%  Again, some of the models had this correct traffic sign in their top 5 lists but overall, it wasn't enough to be the best prediction.
+6 of out 10 of models did have "Pedestrian" as one of the top 5 labels but the probabilities weren't large enough to make it the best prediction.  
 
-The code for making predictions on my final model is located in the 11th cell of the Ipython notebook.
+### Visualize the Neural Network's State with Test Images
 
-For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
+Here are some examples visualizatize activation layers.  Below are the first activation layer of the single model using different traffic signs.  They were chosen for their different shapes and colors.
 
-### (Optional) Visualizing the Neural Network (See Step 4 of the Ipython notebook for more details)
-#### 1. Discuss the visual output of your trained network's feature maps. What characteristics did the neural network use to make classifications?
+#### Speed limit (30km/h)
 
+![][image9]
+![][image10]
 
+#### Pedestrians
+
+![][image18]
+![][image19]
+
+#### Roundabout mandatory
+
+![][image20]
+![][image21]
+
+#### No entry
+
+![][image22]
+![][image23]
+
+Some generalizations can be made about some of the feature maps.  Feature Map 9 seems to be activate for the color red.  The red triangular and circular shapes of 3 out of 4 traffic signs light up while it is pretty much dark for the blue "Roundabout mandatory" sign.  Feature Map 12 is for blue.  The blues in the "Roundabout mandatory" sign light up for that feature map as well as part of the background sky for the "Pedestrians" sign.
