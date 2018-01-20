@@ -1,14 +1,11 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
 # **Traffic Sign Recognition** 
 
 **Build a Traffic Sign Recognition Project**
-
-The goals / steps of this project are the following:
-* Load the data set (see below for links to the project data set)
-* Explore, summarize and visualize the data set
-* Design, train and test a model architecture
-* Use the model to make predictions on new images
-* Analyze the softmax probabilities of the new images
-* Summarize the results with a written report
 
 
 [//]: # (Image References)
@@ -41,7 +38,7 @@ The goals / steps of this project are the following:
 [image23]: ./writeup_images/extra_no_entry_activations.png
 
 ---
-### Writeup / README
+### Introduction
 
 The purpose of this project is to build a model to classify German traffic signs. The model is a convolutional neural network based on LeNet.  The image data will be augmented and an additional enhanced grayscale layer used as the input.  This will produce an acceptable model but we will use an ensemble model to improve the accuracy even further.  The ensemble model will be an easy way to improve the accuracy without having to make a lot of structural changes to the model or modifications to the data.
 
@@ -49,7 +46,7 @@ Here is a link to my [project code](https://github.com/ekkus93/CarND-Traffic-Sig
 
 ### Data Set Summary & Exploration
 
-#### 1. Provide a basic summary of the data set. In the code, the analysis should be done using python, numpy and/or pandas methods rather than hardcoding results manually.
+#### Basic summary of the data set. 
 
 I used the pandas library to calculate summary statistics of the traffic
 signs data set:
@@ -60,11 +57,12 @@ signs data set:
 * The shape of a traffic sign image is (32, 32)
 * The number of unique classes/labels in the data set is 43
 
-#### 2. Include an exploratory visualization of the dataset.
+#### 2. Exploratory visualization of the dataset.
 
 Here is a sample of the traffic light images from the training dataset. 
 
 ![][image1]
+
 
 Here is a breakdown of the number of images per label from the training dataset.
 
@@ -78,6 +76,7 @@ The traffic sign with most number of examples is "Speed limit (50km/h)" (2) with
 #### Preprocessing the Image Data
 
 ##### Balancing Images
+
 The images will be augmented so each label will end up having the same number of images as the label with the most images (2010).  The main purpose of balancing the data is to not bias the prediction towards more common traffic signs.  We will also need the extra data for the ensemble model.
 
 If a label has less than 2010 images, an images for that label will be picked at random.  The random image will have one of the following transformations applied to it:
@@ -85,21 +84,25 @@ If a label has less than 2010 images, an images for that label will be picked at
 1. Rotation 
 
 The range for the random rotation between -20.0 and 20.0 degrees. Some of the traffic signs such as "Turn right ahead" and "Turn left ahead" depend on direction so we will limit the rotation to that range.
+
 ![][image4]
 
 2. Shift 
 
 The images can be shifted +/-5 up or down and left or right.
+
 ![][image5]
 
 3. Shear
 
 The images can be sheared from -0.2 to 2.0 radians.
+
 ![][image6]
 
 ##### Grayscale layer
 
 In addition to the RBG color layers, an additional grayscale layer was added to each of the images.  The grayscale layer was sharpened using histogram equalization. The color infotmation is important for distinguishing different traffic signs. The sharpened grayscale layer is important for different signs with text such as speed limit signs.
+
 ![][image2]
 
 #### 2. The Model
@@ -157,7 +160,7 @@ A test accuracy of 96.6% was good but I thought that it could be better.  An ens
 
 Here are the accuracies for all of the 10 models:
 
-![][image8]
+![] [image8]
 
 They are similar to that of the single model.  They are also similar to each other.  The validation accuracies range from 97.3-98.5%.  The test accuracies range from 95.7-96.8%.
 
@@ -171,7 +174,9 @@ I tried two different ways of ensembling the individual models: a Voting model a
 | valid	    | 0.993           | 0.992                        |
 | test	    | 0.984           | 0.984                        |
 
-![] [image13] ![] [image14]
+![] [image13] 
+
+![] [image14]
 
 Both models were pretty similar with a validation accuracy of 99.2-99.3% and a test accuracy of 98.4%.
 
@@ -256,21 +261,31 @@ Here are some examples visualizatize activation layers.  Below are the first act
 #### Speed limit (30km/h)
 
 ![][image9]
+
 ![][image10]
+
+******
 
 #### Pedestrians
 
 ![][image18]
+
 ![][image19]
+
+******
 
 #### Roundabout mandatory
 
 ![][image20]
+
 ![][image21]
+
+******
 
 #### No entry
 
 ![][image22]
+
 ![][image23]
 
 Some generalizations can be made about some of the feature maps.  Feature Map 9 seems to be activate for the color red.  The red triangular and circular shapes of 3 out of 4 traffic signs light up while it is pretty much dark for the blue "Roundabout mandatory" sign.  Feature Map 12 is for blue.  The blues in the "Roundabout mandatory" sign light up for that feature map as well as part of the background sky for the "Pedestrians" sign.
